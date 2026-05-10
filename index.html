@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body{
+      overflow:hidden;
+      background: linear-gradient(135deg,#ff6ec4,#7873f5);
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      color:white;
+      padding:20px;
+    }
+
+    .card{
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      border:1px solid rgba(255,255,255,0.2);
+      padding:35px 25px;
+      border-radius:25px;
+      width:100%;
+      max-width:420px;
+      box-shadow:0 8px 30px rgba(0,0,0,0.2);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float{
+      0%,100%{
+        transform: translateY(0px);
+      }
+      50%{
+        transform: translateY(-10px);
+      }
+    }
+
+    h1{
+      font-size:2.5rem;
+      margin-bottom:15px;
+    }
+
+    .name{
+      color:#ffe066;
+    }
+
+    p{
+      font-size:1.1rem;
+      line-height:1.7;
+      margin-bottom:25px;
+    }
+
+    .cake{
+      font-size:80px;
+      animation: bounce 1.5s infinite;
+    }
+
+    @keyframes bounce{
+      0%,100%{
+        transform: translateY(0);
+      }
+      50%{
+        transform: translateY(-12px);
+      }
+    }
+
+    button{
+      background:white;
+      color:#ff4fa3;
+      border:none;
+      padding:14px 28px;
+      border-radius:50px;
+      font-size:1rem;
+      font-weight:bold;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    button:hover{
+      transform: scale(1.08);
+      background:#ffe066;
+      color:#333;
+    }
+
+    canvas{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+    }
+
+    @media(max-width:480px){
+      h1{
+        font-size:2rem;
+      }
+
+      p{
+        font-size:1rem;
+      }
+
+      .cake{
+        font-size:65px;
+      }
+
+      .card{
+        padding:28px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <canvas id="confetti"></canvas>
+
+  <div class="card">
+    <div class="cake">🎂</div>
+
+    <h1>Happy Birthday <span class="name">Ravi!</span></h1>
+
+    <p>
+      Wishing you endless happiness, success, and joy on your special day.
+      May all your dreams come true and your smile never fade! 🎉
+    </p>
+
+    <button onclick="startConfetti()">
+      Celebrate 🎊
+    </button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let confetti = [];
+
+    function randomColor() {
+      const colors = [
+        "#ff0a54",
+        "#ff477e",
+        "#ff7096",
+        "#ff85a1",
+        "#fbb1bd",
+        "#f9bec7",
+        "#7b2cbf",
+        "#3a86ff",
+        "#00c853",
+        "#ffd60a"
+      ];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function createConfetti() {
+      confetti = [];
+
+      for (let i = 0; i < 250; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 2,
+          d: Math.random() * 250,
+          color: randomColor(),
+          tilt: Math.floor(Math.random() * 10) - 10,
+          tiltAngleIncremental: Math.random() * 0.07 + 0.05,
+          tiltAngle: 0
+        });
+      }
+    }
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      confetti.forEach((c) => {
+        ctx.beginPath();
+        ctx.lineWidth = c.r;
+        ctx.strokeStyle = c.color;
+        ctx.moveTo(c.x + c.tilt + c.r / 3, c.y);
+        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 5);
+        ctx.stroke();
+      });
+
+      updateConfetti();
+    }
+
+    function updateConfetti() {
+      confetti.forEach((c, index) => {
+        c.tiltAngle += c.tiltAngleIncremental;
+        c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2;
+        c.tilt = Math.sin(c.tiltAngle) * 15;
+
+        if (c.y > canvas.height) {
+          confetti[index] = {
+            ...c,
+            x: Math.random() * canvas.width,
+            y: -20
+          };
+        }
+      });
+    }
+
+    function animate() {
+      drawConfetti();
+      requestAnimationFrame(animate);
+    }
+
+    function startConfetti() {
+      createConfetti();
+    }
+
+    startConfetti();
+    animate();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+
+</body>
+</html>
